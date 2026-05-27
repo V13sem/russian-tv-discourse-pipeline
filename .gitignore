@@ -1,0 +1,10 @@
+venv/
+__pycache__/
+*.mp4
+*.mkv
+*.wav
+*.mp3
+*.srt
+*.vtt
+*.json
+roh/
