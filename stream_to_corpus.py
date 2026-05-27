@@ -2,8 +2,10 @@ import subprocess
 import os
 import sys
 
-gdrive = r"C:\Users\PeppermintButler\Desktop\Bachelorarbeit\Audio\roh"
-yt_dlp = r"D:\yt-dlp\yt-dlp.exe"
+from pathlib import Path
+BASE_DIR = Path(__file__).resolve().parent
+gdrive =BASE_DIR / "roh"
+yt_dlp = "yt-dlp"
 
 while True:
     url = input("Video URL (ENTER zum Beenden): ").strip()
@@ -48,7 +50,7 @@ while True:
             "-m",
             "whisper",
             audio_file,
-            "--language", "Russian",  # Sprache erzwingen (z. B. Deutsch)
+            "--language", "Russian",  # Sprache erzwingen 
             "--model", "small",  # Modell wählen (tiny/base/small/medium/large)
             "--output_dir", gdrive  # Speicherort für die Transkription
         ]
