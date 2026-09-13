@@ -1,4 +1,3 @@
-#   python NEW_compare_periods.py
 import pandas as pd
 from pathlib import Path
 import numpy as np
@@ -13,13 +12,11 @@ import numpy as np
 # Die Vergleichskennzahlen dient zur Identifikation auffälliger Veränderungen.
 
 
-INPUT_PERIOD_CSV = Path(
-    ""
-)
+INPUT_PERIOD_CSV = "collocations_yearly.csv"
 
-OUTPUT_DIR = Path(
-    ""
-)
+
+OUTPUT_DIR = "collocations_periods.csv"
+
 
 OUTPUT_COMPARISON_CSV = (
     OUTPUT_DIR / "collocations_period_comparison.csv"
