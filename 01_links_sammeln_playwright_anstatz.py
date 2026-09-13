@@ -26,7 +26,7 @@ from playwright.sync_api import sync_playwright
 # ── Konfiguration ─────────────────────────────────────────────────────────────
 
 START_URL = "https://smotrim.ru/brand/60851"
-OUTPUT_CSV = Path(r"C:\Users\PeppermintButler\Desktop\Bachelorarbeit\Audio\links.csv") 
+OUTPUT_CSV = Path(r"links.csv") 
 
 HEADLESS = False  # zum Testen sichtbar lassen
 
