@@ -1,5 +1,4 @@
 results/*.csv filter=lfs diff=lfs merge=lfs -text
-*.txt filter=lfs diff=lfs merge=lfs -text
-*.csv filter=lfs diff=lfs merge=lfs -text
 *.xlsx filter=lfs diff=lfs merge=lfs -text
 *.parquet filter=lfs diff=lfs merge=lfs -text
+legislation_russia_reproduction_family_gender_2019_2025.xlsx filter=lfs diff=lfs merge=lfs -text
