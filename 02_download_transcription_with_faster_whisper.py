@@ -1,8 +1,8 @@
 """
 faster whisper transcription for smotrim.ru audio
-03_download_transcription_with_faster_whisper.py
+02_download_transcription_with_faster_whisper.py
 --------------------------
-Liest links.csv (erzeugt von 01_links_sammeln_playwright_anstatz1.py),
+Liest links.csv (erzeugt von 01_links_sammeln_playwright_anstatz.py),
 öffnet jede Episodenseite (smotrim.ru/video/XXXXX) per Playwright (Firefox),
 fängt die m3u8-URL mit sign ab,
 lädt Audio per yt-dlp (Format 400 = kleinste Qualität) herunter.
