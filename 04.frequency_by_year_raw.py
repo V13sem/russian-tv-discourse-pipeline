@@ -1,4 +1,28 @@
+# frequency_by_year_raw.py
+
+from pathlib import Path
+import csv
+import re
+
+
+# ============================================================
+# Einstellungen
+# ============================================================
+
+INPUT_DIR = Path("lemmatisiert")
+OUTPUT_CSV = Path("frequency_by_year_raw.csv")
+
+# Russische Wörter zählen
+TOKEN_RE = re.compile(r"[а-яА-ЯёЁ]+")
+
+# Suchmuster für Begriffsfelder
+# Die Texte werden vorher auf Kleinschreibung gesetzt und ё -> е normalisiert.
 PATTERNS = {
+    # ========================================================
+    # Reproduktionsdiskurs im engeren Sinn
+    # Familie und soziale Reproduktion
+    # ========================================================
+
     "familie": [
         r"\bсемь(?:я|и|е|ю|ей|ями|ях)\b",
         r"\bсемейн\w*",
@@ -102,7 +126,6 @@ PATTERNS = {
     r"\bвоспитать\w*",
     ],
 
-    
     "reproduktion_fachbegriff": [
         r"\bрепродукц\w*",
         r"\bрепродуктив\w*",
@@ -259,6 +282,127 @@ PATTERNS = {
 
     "propaganda": [
         r"\bпропаганд\w*",        # пропаганда, пропагандировать ...
-    ]
-
+    ],
 }
+
+
+# ============================================================
+# Hilfsfunktionen
+# ============================================================
+
+def normalize_text(text: str) -> str:
+    """
+    Vereinheitlicht den Text für die Suche.
+    ё wird zu е, weil russische Texte ё oft uneinheitlich verwenden.
+    """
+    return text.lower().replace("ё", "е")
+
+
+def extract_year(filename: str) -> str:
+    """
+    Extrahiert das Jahr aus Dateinamen wie:
+    2019-01-09_1859410.txt
+    """
+    match = re.search(r"(20\d{2})", filename)
+    return match.group(1) if match else "unknown"
+
+
+def count_tokens(text: str) -> int:
+    return len(TOKEN_RE.findall(text))
+
+
+def count_pattern_group(text: str, pattern_list: list[str]) -> int:
+    count = 0
+
+    for pattern in pattern_list:
+        count += len(re.findall(pattern, text))
+
+    return count
+
+
+
+# ============================================================
+# Hauptprogramm
+# ============================================================
+
+def main():
+    files = list(INPUT_DIR.glob("*.txt"))
+
+    if not files:
+        raise RuntimeError(f"Keine TXT-Dateien gefunden in: {INPUT_DIR}")
+
+    print(f"Gefundene TXT-Dateien: {len(files)}")
+
+    # Jahresdaten sammeln
+    yearly = {}
+
+    for index, file in enumerate(files, start=1):
+        year = extract_year(file.name)
+
+        if year not in yearly:
+            yearly[year] = {
+                "year": year,
+                "files": 0,
+                "tokens": 0,
+            }
+
+            for group_name in PATTERNS:
+                yearly[year][group_name] = 0
+
+        print(f"[{index}/{len(files)}] {file.name}")
+
+        raw_text = file.read_text(encoding="utf-8", errors="ignore")
+        text = normalize_text(raw_text)
+
+        yearly[year]["files"] += 1
+        yearly[year]["tokens"] += count_tokens(text)
+
+        for group_name, pattern_list in PATTERNS.items():
+            # Sowohl zählen (alte Logik) als auch Positionen speichern (neue Logik)
+            yearly[year][group_name] += count_pattern_group(text, pattern_list)
+
+
+
+        
+    # CSV-Spalten bauen
+    fieldnames = ["year", "files", "tokens"]
+
+    for group_name in PATTERNS:
+        fieldnames.append(group_name)
+        fieldnames.append(f"{group_name}_per_10k")
+
+    # CSV schreiben
+    with OUTPUT_CSV.open("w", encoding="utf-8-sig", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+
+        for year in sorted(yearly.keys()):
+            row = yearly[year]
+            tokens = row["tokens"]
+
+            output_row = {
+                "year": year,
+                "files": row["files"],
+                "tokens": tokens,
+            }
+
+            for group_name in PATTERNS:
+                absolute = row[group_name]
+
+                if tokens > 0:
+                    relative = absolute / tokens * 10_000
+                else:
+                    relative = 0
+
+                output_row[group_name] = absolute
+                output_row[f"{group_name}_per_10k"] = round(relative, 3)
+
+            writer.writerow(output_row)
+
+    print("\nFertig.")
+    print(f"CSV gespeichert unter: {OUTPUT_CSV}")
+  
+
+
+if __name__ == "__main__":
+    main()
