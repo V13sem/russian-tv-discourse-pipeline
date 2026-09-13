@@ -1,5 +1,3 @@
-# frequency_by_year_raw.py
-
 from pathlib import Path
 import csv
 import re
@@ -9,8 +7,8 @@ import re
 # Einstellungen
 # ============================================================
 
-INPUT_DIR = Path("lemmatisiert")
-OUTPUT_CSV = Path("frequency_by_year_raw.csv")
+INPUT_DIR = "lemmatisiert"
+OUTPUT_CSV = "frequency_by_year_raw.csv"
 
 # Russische Wörter zählen
 TOKEN_RE = re.compile(r"[а-яА-ЯёЁ]+")
