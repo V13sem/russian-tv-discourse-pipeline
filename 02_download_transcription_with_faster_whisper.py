@@ -102,12 +102,6 @@ def transkript_existiert(stem: str, datum: str) -> bool:
     if any(TRANSCRIPT_DIR.glob(f"{stem}*.txt")):
         return True
     
-    # 2. "Alte" Dateien: Prüfung nach Datum im transkripte-Ordner
-    # z.B. 2021-07-08_60_minut.txt + 2021-07-08.2_60_minut.txt = 2 → beide da
-    vorhandene  = list(TRANSCRIPT_DIR.glob(f"{datum}*.txt"))
-    if len(vorhandene) >=2:
-        return True
-    
     return False
 
 def write_log(entry: dict) -> None:
